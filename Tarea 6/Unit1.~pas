@@ -1,0 +1,267 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls;
+
+type
+  TForm1 = class(TForm)
+    Image1: TImage;
+    Panel1: TPanel;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    Button5: TButton;
+    Button6: TButton;
+    Button7: TButton;
+    Button8: TButton;
+    Button9: TButton;
+    Button10: TButton;
+    Button11: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure Button10Click(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+type TPoint3D = Packed Record
+  X,Y,Z : Real;
+  end;
+
+var
+  Form1: TForm1;
+  P, Q : TPoint;
+  Cubo : Array[1..10] of TPoint3D;
+  //Las coordenadas x, y Proyectadas
+  Xp, Yp : Integer;
+  //angulo
+  alpha, S, C : Real;
+  //Auxiliares
+  Xaux, YAux, Zaux : Real;
+
+implementation
+
+{$R *.dfm}
+//
+//Constructor
+//
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Image1.Canvas.Rectangle(0,0,300,300);
+  //Angulo
+  alpha := (5*PI)/180;
+  //Coordenadas de Cada punto del cubo
+  //Piso
+  Cubo[1].X := +20; Cubo[1].Y := +20; Cubo[1].Z := -20;
+  Cubo[2].X := +20; Cubo[2].Y := -20; Cubo[2].Z := -20;
+  Cubo[3].X := -20; Cubo[3].Y := -20; Cubo[3].Z := -20;
+  Cubo[4].X := -20; Cubo[4].Y := +20; Cubo[4].Z := -20;
+  Cubo[5].X := +20; Cubo[5].Y := +20; Cubo[5].Z := -20;
+  //Techo
+  Cubo[6].X := +20; Cubo[6].Y := +20; Cubo[6].Z := 20;
+  Cubo[7].X := +20; Cubo[7].Y := -20; Cubo[7].Z := 20;
+  Cubo[8].X := -20; Cubo[8].Y := -20; Cubo[8].Z := 20;
+  Cubo[9].X := -20; Cubo[9].Y := +20; Cubo[9].Z := 20;
+  Cubo[10].X := +20; Cubo[10].Y := +20; Cubo[10].Z := 20;
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+begin
+  Close();
+end;
+//
+//Boton 1
+//
+procedure TForm1.Button1Click(Sender: TObject);
+//Procedimiento Local
+procedure ProyParalela(x,y : Real; var Xpan, Ypan: Integer);
+begin
+  //Proyeccion Paralela
+  Xpan := Round(x);
+  Xpan := Xpan +150;
+  Ypan := Round(y);
+  Ypan := Ypan +150;
+end;
+//Variables
+var i : Integer;
+begin
+  i := 1;
+  while (i < 10) do
+  begin
+    if (i = 5)then
+    begin
+      i := i+1;
+    end;
+    //Proyeccion Paralela
+    ProyParalela(Cubo[i].X, Cubo[i].Y, P.X, P.Y);
+    ProyParalela(Cubo[i+1].X, Cubo[i+1].Y, Q.X, Q.Y);
+    Image1.Canvas.Pen.Color := ClRed;
+    Image1.Canvas.MoveTo(P.X, P.Y);
+    Image1.Canvas.LineTo(Q.X, Q.Y);
+    if(i = 6)then
+    begin
+      ProyParalela(Cubo[1].X, Cubo[1].Y, Q.X, Q.Y);
+      Image1.Canvas.MoveTo(P.X, P.Y);
+      Image1.Canvas.LineTo(Q.X, Q.Y);
+    end;
+    if(i = 7)then
+    begin
+      ProyParalela(Cubo[2].X, Cubo[2].Y, Q.X, Q.Y);
+      Image1.Canvas.MoveTo(P.X, P.Y);
+      Image1.Canvas.LineTo(Q.X, Q.Y);
+    end;
+    if(i = 8)then
+    begin
+      ProyParalela(Cubo[3].X, Cubo[3].Y, Q.X, Q.Y);
+      Image1.Canvas.MoveTo(P.X, P.Y);
+      Image1.Canvas.LineTo(Q.X, Q.Y);
+    end;
+    if(i = 9)then
+    begin
+      ProyParalela(Cubo[4].X, Cubo[4].Y, Q.X, Q.Y);
+      Image1.Canvas.MoveTo(P.X, P.Y);
+      Image1.Canvas.LineTo(Q.X, Q.Y);
+    end;
+
+    Image1.Canvas.Pen.Color := ClBlack;
+    i := i +1;
+  end;
+end;
+
+procedure TForm1.Button9Click(Sender: TObject);
+begin
+  Image1.Canvas.Rectangle(0,0,300,300);
+end;
+
+procedure TForm1.Button8Click(Sender: TObject);
+var i : Integer;
+begin
+  S := sin(alpha);//Seno
+  C := cos(alpha);//Coseno
+  //S y C son variables que almacenan sin y cos entonces
+  //Se simplican los calculos para no calcular lo mismo varias veces
+  //Rotacion
+  for i := 1 to 10 do
+  begin
+    Xaux := Cubo[i].X * C + Cubo[i].Y * S;
+    Yaux := -1 * Cubo[i].X * S + Cubo[i].Y * C;
+    Cubo[i].X := Xaux;
+    Cubo[i].Y := Yaux;
+  end;
+  Form1.Button9Click(Sender); 
+  Form1.Button1Click(Sender);
+end;
+
+procedure TForm1.Button10Click(Sender: TObject);
+var i : Integer;
+begin
+  S := sin(alpha);//Seno
+  C := cos(alpha);//Coseno
+  //S y C son variables que almacenan sin y cos entonces
+  //Se simplican los calculos para no calcular lo mismo varias veces
+  //Rotacion
+  for i := 1 to 10 do
+  begin
+    Yaux := Cubo[i].Y * C + Cubo[i].Z * S;
+    Zaux := -1 * Cubo[i].Y * S + Cubo[i].Z * C;
+
+    Cubo[i].Y := Yaux;
+    Cubo[i].Z := Zaux;
+  end;
+  Form1.Button9Click(Sender); 
+  Form1.Button1Click(sender);
+end;
+
+procedure TForm1.Button11Click(Sender: TObject);
+var i : Integer;
+begin
+  S := sin(alpha);//Seno
+  C := cos(alpha);//Coseno
+  //S y C son variables que almacenan sin y cos entonces
+  //Se simplican los calculos para no calcular lo mismo varias veces
+  //Rotacion
+  for i := 1 to 10 do
+  begin
+    Xaux := -1 * Cubo[i].Z * S + Cubo[i].X * C;
+    Zaux := Cubo[i].Z * C + Cubo[i].X * S;
+
+    Cubo[i].X := Xaux;
+    Cubo[i].Z := Zaux;
+  end;
+  Form1.Button9Click(Sender);
+  Form1.Button1Click(sender);
+end;
+
+procedure TForm1.Button6Click(Sender: TObject);
+var i : Integer;
+begin
+  S := sin(-alpha);//Seno
+  C := cos(-alpha);//Coseno
+  //S y C son variables que almacenan sin y cos entonces
+  //Se simplican los calculos para no calcular lo mismo varias veces
+  //Rotacion
+  for i := 1 to 10 do
+  begin
+    Xaux := Cubo[i].X * C + Cubo[i].Y * S;
+    Yaux := -1 * Cubo[i].X * S + Cubo[i].Y * C;
+    Cubo[i].X := Xaux;
+    Cubo[i].Y := Yaux;
+  end;
+  Form1.Button9Click(Sender); 
+  Form1.Button1Click(Sender);
+end;
+
+procedure TForm1.Button7Click(Sender: TObject);
+var i : Integer;
+begin
+  S := sin(-alpha);//Seno
+  C := cos(-alpha);//Coseno
+  //S y C son variables que almacenan sin y cos entonces
+  //Se simplican los calculos para no calcular lo mismo varias veces
+  //Rotacion
+  for i := 1 to 10 do
+  begin
+    Xaux := -1 * Cubo[i].Z * S + Cubo[i].X * C;
+    Zaux := Cubo[i].Z * C + Cubo[i].X * S;
+
+    Cubo[i].X := Xaux;
+    Cubo[i].Z := Zaux;
+  end;
+  Form1.Button9Click(Sender);
+  Form1.Button1Click(sender);
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+var i : Integer;
+begin
+  S := sin(-alpha);//Seno
+  C := cos(-alpha);//Coseno
+  //S y C son variables que almacenan sin y cos entonces
+  //Se simplican los calculos para no calcular lo mismo varias veces
+  //Rotacion
+  for i := 1 to 10 do
+  begin
+    Yaux := Cubo[i].Y * C + Cubo[i].Z * S;
+    Zaux := -1 * Cubo[i].Y * S + Cubo[i].Z * C;
+
+    Cubo[i].Y := Yaux;
+    Cubo[i].Z := Zaux;
+  end;
+  Form1.Button9Click(Sender); 
+  Form1.Button1Click(sender);
+end;
+
+end.
